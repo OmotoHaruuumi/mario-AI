@@ -27,6 +27,8 @@
 
 package ch.idsia.scenarios;
 
+import ch.idsia.agents.Agent;
+import ch.idsia.agents.controllers.OwnAgent;
 import ch.idsia.benchmark.tasks.BasicTask;
 import ch.idsia.tools.MarioAIOptions;
 
@@ -38,10 +40,15 @@ public final class Main
 {
 public static void main(String[] args)
 {
-    final MarioAIOptions marioAIOptions = new MarioAIOptions(args);
-    
-    int seed = 99;
+	final MarioAIOptions marioAIOptions = new MarioAIOptions(args);
+    final Agent agent =new OwnAgent();
+    marioAIOptions.setAgent(agent);
+	
+    int seed =30;
     marioAIOptions.setLevelRandSeed(seed);
+    int d = 1;
+    marioAIOptions.setLevelDifficulty(d);
+    marioAIOptions.setEnemies("off");
     
     final BasicTask basicTask = new BasicTask(marioAIOptions);
     basicTask.setOptionsAndReset(marioAIOptions);

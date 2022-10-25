@@ -28,8 +28,10 @@
 package ch.idsia.agents.controllers;
 
 import ch.idsia.agents.Agent;
+import ch.idsia.benchmark.mario.engine.GeneralizerLevelScene;
 import ch.idsia.benchmark.mario.engine.sprites.Mario;
 import ch.idsia.benchmark.mario.environments.Environment;
+import ch.idsia.tools.*;
 
 /**
  * Created by IntelliJ IDEA.
@@ -47,15 +49,77 @@ public OwnAgent()
 {
     super("OwnAgent");
     reset();
+    int trueJumpCounter = 0;
+    int trueSpeedCounter = 0;
+
 }
 
 public void reset()
 {
-    action = new boolean[Environment.numberOfKeys];
+	action = new boolean[Environment.numberOfKeys];
+	trueJumpCounter = 0;
+    trueSpeedCounter = 0;
 }
 
 public boolean[] getAction()
 {
-    return action;
+	if(action[Mario.KEY_LEFT]&& !isObstacle(marioEgoRow,marioEgoCol-1)) {
+		if(!jumpcheck(marioEgoRow,marioEgoCol-1)) {
+			LW();
+		}else {RW();}
+	}
+	else if((action[Mario.KEY_RIGHT]&&(jumpcheck(marioEgoRow,marioEgoCol+4)))||(isObstacle(marioEgoRow,marioEgoCol+1))) {
+    	RJ();}  
+	
+	else if(!isObstacle(marioEgoRow,marioEgoCol+1)&&jumpcheck(marioEgoRow,marioEgoCol+1)) {
+	    	RW();}
+	    
+    else LW();
+		
+	
+	return action;
 }
+
+
+public boolean isObstacle(int r, int c){
+return getReceptiveFieldCellValue(r,
+c)==GeneralizerLevelScene.BRICK
+|| getReceptiveFieldCellValue(r,
+c)==GeneralizerLevelScene.BORDER_CANNOT_PASS_THROUGH
+|| getReceptiveFieldCellValue(r,
+c)==GeneralizerLevelScene.FLOWER_POT_OR_CANNON
+|| getReceptiveFieldCellValue(r,
+c)==GeneralizerLevelScene.LADDER;
+}
+
+public boolean jumpcheck(int r,int c) {
+	boolean jumpcheck=false;
+	
+	for(int i=1;i<10;i++) {
+		if(isObstacle(r+i  ,c)){
+			jumpcheck=true;
+			break;
+		}
+	}
+	return jumpcheck;
+}
+
+public void RJ(){
+	action[Mario.KEY_JUMP] = isMarioAbleToJump || !isMarioOnGround;
+	action[Mario.KEY_RIGHT] = true;
+	action[Mario.KEY_LEFT]=false;
+}
+
+public void RW() {
+	action[Mario.KEY_JUMP] = false;
+	action[Mario.KEY_RIGHT] = true;
+	action[Mario.KEY_LEFT]=false;
+}
+
+public void LW() {
+	action[Mario.KEY_JUMP] = false;
+	action[Mario.KEY_RIGHT] = false;
+	action[Mario.KEY_LEFT]=true;
+}
+
 }

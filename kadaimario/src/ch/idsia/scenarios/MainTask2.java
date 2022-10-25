@@ -30,7 +30,7 @@ package ch.idsia.scenarios;
 import ch.idsia.benchmark.tasks.BasicTask;
 import ch.idsia.tools.MarioAIOptions;
 import ch.idsia.agents.Agent;
-import ch.idsia.agents.controllers.IgnoreObstacleAgent;
+import ch.idsia.agents.controllers.OwnAgent;
 
 /**
  * Created by IntelliJ IDEA. User: Sergey Karakovskiy, sergey at idsia dot ch Date: Mar 17, 2010 Time: 8:28:00 AM
@@ -41,8 +41,7 @@ public final class MainTask2
 public static void main(String[] args)
 {
     final MarioAIOptions marioAIOptions = new MarioAIOptions(args);
-
-    final Agent agent = new IgnoreObstacleAgent();
+    final Agent agent =new OwnAgent();
     marioAIOptions.setAgent(agent);
     
     marioAIOptions.setArgs("-lca off -lhs off -ld 1 -ls 0 -le off");
