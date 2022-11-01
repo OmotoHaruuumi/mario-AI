@@ -43,8 +43,7 @@ import java.util.Random;
 
 public class OwnAgent2 extends BasicMarioAIAgent implements Agent
 {
-int trueJumpCounter = 0;
-int trueSpeedCounter = 0;
+int fire_counter = 0;
 
 public OwnAgent2()
 {
@@ -59,23 +58,41 @@ public void reset()
 
 public boolean[] getAction()
 {
+		
+	
 	//敵が自分より高いところにいる場合
-	if(isEnemies(marioEgoRow-1,marioEgoCol)
+      if(isEnemies(marioEgoRow-1,marioEgoCol)
+    		||isEnemies(marioEgoRow-1,marioEgoCol+1)
+  			||isEnemies(marioEgoRow-1,marioEgoCol+2) 
 			||isEnemies(marioEgoRow-2,marioEgoCol)
+			||isEnemies(marioEgoRow-2,marioEgoCol+1)
+			||isEnemies(marioEgoRow-2,marioEgoCol+2)
+			||isEnemies(marioEgoRow-2,marioEgoCol+3)
 			||isEnemies(marioEgoRow-3,marioEgoCol)
-			||isEnemies(marioEgoRow-3,marioEgoCol+1)
-			||isEnemies(marioEgoRow-1,marioEgoCol+1)
-			||isEnemies(marioEgoRow-1,marioEgoCol+2)
-			||isEnemies(marioEgoRow-4,marioEgoCol)
-			||isEnemies(marioEgoRow-4,marioEgoCol+1))
+    	    ||isEnemies(marioEgoRow-3,marioEgoCol+1)
+    	    ||isEnemies(marioEgoRow-3,marioEgoCol+2)
+    		||isEnemies(marioEgoRow-4,marioEgoCol)
+  			||isEnemies(marioEgoRow-4,marioEgoCol+1))
 			 {
-		LW();
+		LDW();
 	}
 	
 	
-	//敵が目の前にいる場合
-	else if(isEnemies(marioEgoRow,marioEgoCol+1) ||isEnemies(marioEgoRow,marioEgoCol+2)) {
+	  
+	  
+	  
+	  //敵が目の前にいる場合
+	else if(isEnemies(marioEgoRow,marioEgoCol+1)) {
 		VJ();
+	}
+	else if(isEnemies(marioEgoRow,marioEgoCol+2)){
+		//特殊処理
+		if(isEnemies(marioEgoRow,marioEgoCol+4)){
+			VJ();
+		}
+		else {
+		RJ();
+		}
 	}
 	
 	//前に障害物がある時の処理
@@ -84,22 +101,41 @@ public boolean[] getAction()
 	}
 	
 	//少し先に敵がいる場合の処理
-	else if(marioMode==2 && isEnemies(marioEgoRow,marioEgoCol+3)
+	else if(marioMode==2 && (isEnemies(marioEgoRow,marioEgoCol+3)
 		    ||isEnemies(marioEgoRow,marioEgoCol+4)
-		    ||isEnemies(marioEgoRow,marioEgoCol+5))
+		    ||isEnemies(marioEgoRow,marioEgoCol+5)))
 	{
     	Attack();
     }
 	
+	//谷に落ちるとき
+	else if(marioMode==2  && isMarioOnGround && (!isObstacle(marioEgoRow+1,marioEgoCol) || !isObstacle(marioEgoRow+1,marioEgoCol+2))&& fire_counter==0) {
+		Attack();
+		fire_counter=fire_counter+1;
+	}
 	
+	
+	//基本行動
 	else if(jumpcheck(marioEgoRow,marioEgoCol+1)) {
     	RW();
     }
-	else {
-		RJ();
-	}
 	
-    return action;
+     //fire_counterが回っている時
+      if(fire_counter>0) {
+		  if(fire_counter!=3) {
+			  Attack();
+			  fire_counter=fire_counter+1;
+		  }
+		  else {
+			  RW();
+			  fire_counter=0;
+		  }
+	  }
+      
+      
+      
+    System.out.println(fire_counter);
+	return action;
 }
 
 
@@ -135,7 +171,7 @@ public boolean jumpcheck(int r,int c) {
 
 public void RJ(){
 	action[Mario.KEY_JUMP] = isMarioAbleToJump || !isMarioOnGround;
-	action[Mario.KEY_RIGHT] = true;
+	action[Mario.KEY_RIGHT] = isMarioAbleToJump || !isMarioOnGround;
 	action[Mario.KEY_LEFT]=false;
 	action[Mario.KEY_SPEED]=false;                   
 }
@@ -154,6 +190,14 @@ public void LW() {
 	action[Mario.KEY_SPEED]=false;
 }
 
+public void LDW() {
+	action[Mario.KEY_JUMP] = false;
+	action[Mario.KEY_RIGHT] = false;
+	action[Mario.KEY_LEFT]=true;
+	action[Mario.KEY_SPEED]=true;
+}
+
+
 public void VJ() {
 	action[Mario.KEY_JUMP] = isMarioAbleToJump|| !isMarioOnGround;;
 	action[Mario.KEY_RIGHT] = false;
@@ -165,7 +209,7 @@ public void Attack() {
 	action[Mario.KEY_JUMP] = false;
 	action[Mario.KEY_RIGHT] = false;
 	action[Mario.KEY_LEFT]=false;
-	action[Mario.KEY_SPEED]=true;
+	action[Mario.KEY_SPEED]= isMarioAbleToShoot && isMarioOnGround;
 }
 
 
