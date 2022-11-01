@@ -28,7 +28,9 @@
 package ch.idsia.agents.controllers;
 
 import ch.idsia.agents.Agent;
+import ch.idsia.benchmark.mario.engine.GeneralizerLevelScene;
 import ch.idsia.benchmark.mario.engine.sprites.Mario;
+import ch.idsia.benchmark.mario.engine.sprites.Sprite;
 import ch.idsia.benchmark.mario.environments.Environment;
 import java.util.Random;
 
@@ -53,14 +55,119 @@ public OwnAgent2()
 public void reset()
 {
     action = new boolean[Environment.numberOfKeys];
-    action[Mario.KEY_RIGHT] = true;
 }
 
 public boolean[] getAction()
 {
-    Random R = new Random();
-    action[Mario.KEY_DOWN] = R.nextBoolean();
+	//敵が自分より高いところにいる場合
+	if(isEnemies(marioEgoRow-1,marioEgoCol)
+			||isEnemies(marioEgoRow-2,marioEgoCol)
+			||isEnemies(marioEgoRow-3,marioEgoCol)
+			||isEnemies(marioEgoRow-3,marioEgoCol+1)
+			||isEnemies(marioEgoRow-1,marioEgoCol+1)
+			||isEnemies(marioEgoRow-1,marioEgoCol+2)
+			||isEnemies(marioEgoRow-4,marioEgoCol)
+			||isEnemies(marioEgoRow-4,marioEgoCol+1))
+			 {
+		LW();
+	}
+	
+	
+	//敵が目の前にいる場合
+	else if(isEnemies(marioEgoRow,marioEgoCol+1) ||isEnemies(marioEgoRow,marioEgoCol+2)) {
+		VJ();
+	}
+	
+	//前に障害物がある時の処理
+	else if(isObstacle(marioEgoRow,marioEgoCol+1)) {
+		RJ();
+	}
+	
+	//少し先に敵がいる場合の処理
+	else if(marioMode==2 && isEnemies(marioEgoRow,marioEgoCol+3)
+		    ||isEnemies(marioEgoRow,marioEgoCol+4)
+		    ||isEnemies(marioEgoRow,marioEgoCol+5))
+	{
+    	Attack();
+    }
+	
+	
+	else if(jumpcheck(marioEgoRow,marioEgoCol+1)) {
+    	RW();
+    }
+	else {
+		RJ();
+	}
 	
     return action;
 }
+
+
+public boolean isObstacle(int r, int c){
+return getReceptiveFieldCellValue(r,
+c)==GeneralizerLevelScene.BRICK
+|| getReceptiveFieldCellValue(r,
+c)==GeneralizerLevelScene.BORDER_CANNOT_PASS_THROUGH
+|| getReceptiveFieldCellValue(r,
+c)==GeneralizerLevelScene.FLOWER_POT_OR_CANNON
+|| getReceptiveFieldCellValue(r,
+c)==GeneralizerLevelScene.LADDER;
+}
+
+public boolean isEnemies(int r,int c) {
+	return getEnemiesCellValue(r,c)==Sprite.KIND_GOOMBA;
+}
+
+
+
+
+public boolean jumpcheck(int r,int c) {
+	boolean jumpcheck=false;
+	
+	for(int i=1;i<10;i++) {
+		if(isObstacle(r+i  ,c)){
+			jumpcheck=true;
+			break;
+		}
+	}
+	return jumpcheck;
+}
+
+public void RJ(){
+	action[Mario.KEY_JUMP] = isMarioAbleToJump || !isMarioOnGround;
+	action[Mario.KEY_RIGHT] = true;
+	action[Mario.KEY_LEFT]=false;
+	action[Mario.KEY_SPEED]=false;                   
+}
+
+public void RW() {
+	action[Mario.KEY_JUMP] = false;
+	action[Mario.KEY_RIGHT] = true;
+	action[Mario.KEY_LEFT]=false;
+	action[Mario.KEY_SPEED]=false;
+}
+
+public void LW() {
+	action[Mario.KEY_JUMP] = false;
+	action[Mario.KEY_RIGHT] = false;
+	action[Mario.KEY_LEFT]=true;
+	action[Mario.KEY_SPEED]=false;
+}
+
+public void VJ() {
+	action[Mario.KEY_JUMP] = isMarioAbleToJump|| !isMarioOnGround;;
+	action[Mario.KEY_RIGHT] = false;
+	action[Mario.KEY_LEFT]=false;
+	action[Mario.KEY_SPEED]=false;
+}
+
+public void Attack() {
+	action[Mario.KEY_JUMP] = false;
+	action[Mario.KEY_RIGHT] = false;
+	action[Mario.KEY_LEFT]=false;
+	action[Mario.KEY_SPEED]=true;
+}
+
+
+
 }
