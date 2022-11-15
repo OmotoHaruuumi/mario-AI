@@ -1,6 +1,7 @@
 package ch.idsia.agents;
 
 import java.util.Random;
+import java.util.ArrayList;
 
 import ch.idsia.agents.controllers.BasicMarioAIAgent;
 import ch.idsia.benchmark.mario.environments.Environment;
@@ -26,7 +27,8 @@ implements Agent,Evolvable,Comparable,Cloneable{
 
 	/* 乱数用変数 r */
 	Random r = new Random();
-
+	
+	public ArrayList<Integer> height_list=new ArrayList();
 	/* コンストラクタ */
 	public GAAgent(){
 
@@ -81,9 +83,21 @@ implements Agent,Evolvable,Comparable,Cloneable{
 
 	int distance;
 
-	public void setFitness(int fitness){
-		this.fitness = fitness;
-	}
+	public void setFitness(int fitness) {
+
+		if(fitness<100) {
+			this.fitness=fitness;
+		}
+		else {
+		int height_ave=0;
+		 height_ave=list_ave(height_list);
+		int weight=25;
+		if(fitness>99 && fitness<134) {
+			if(height_ave>7) {this.fitness=(fitness-100)+height_ave*weight;}
+			else{this.fitness=(134-fitness)+height_ave*weight;}}
+		else {
+			this.fitness=fitness*100;}}
+		}
 
 	public int getFitness(){
 		return fitness;
@@ -99,7 +113,21 @@ implements Agent,Evolvable,Comparable,Cloneable{
 
 
 	public boolean[] getAction(){
-
+		
+		int height=0;
+		int length=0;
+		float[] pos=null;
+		
+		pos=marioFloatPos;
+		height = Math.round(pos[1])/16;
+		length= Math.round(pos[0])/16;
+		
+		
+		if(length>99 && length<134) {
+		{height_list.add(16-height);}
+		}
+		
+		
 		int input = 0;
 
 		/* 環境情報から input を決定
@@ -107,25 +135,26 @@ implements Agent,Evolvable,Comparable,Cloneable{
 		 */
 
 		/* enemies情報(上位7桁) */
-		input += probe(-1,-1,enemies) * (1 << 15); //probe * 2^15
-		input += probe(0 ,-1,enemies) * (1 << 14);
-		input += probe(1 ,-1,enemies) * (1 << 13);
-		input += probe(-1,0 ,enemies) * (1 << 12);
-		input += probe(1 ,0 ,enemies) * (1 << 11);
-		input += probe(-1,1 ,enemies) * (1 << 10);
-		input += probe(1 ,1 ,enemies) * (1 <<  9);
-
+		input += probe(1,0 ,enemies) * (1 << 15);
+		input += probe(2 ,0 ,enemies) * (1 << 14);
+		
+		
 		/* levelScene情報 */
-		input += probe(-1,-1,levelScene) * (1 << 8);
-		input += probe(0 ,-1,levelScene) * (1 << 7);
-		input += probe(1 ,-1,levelScene) * (1 << 6);
-		input += probe(-1,0 ,levelScene) * (1 << 5);
-		input += probe(1 ,0 ,levelScene) * (1 << 4);
-		input += probe(-1,1 ,levelScene) * (1 << 3);
-		input += probe(1 ,1 ,levelScene) * (1 << 2);
-
-		input += (isMarioOnGround ? 1: 0) * (1 << 1);
-		input += (isMarioAbleToJump ? 1: 0) * (1 << 0);
+		input += probe(1,0 ,levelScene) * (1 << 13);
+		input += probe(2,0 ,levelScene) * (1 << 12);
+		input += probe(1 ,3,levelScene)* (1 <<  11);
+		input += probe(1 ,4,levelScene)* (1 <<  10);
+		input += probe(1 ,1  ,levelScene)* (1 <<  9);
+		input += probe(1 ,-1  ,levelScene)* (1 <<  8);
+		
+		
+		
+		
+		
+		input += (isMarioOnGround ? 1: 0) * (1 << 7);
+		input += (isMarioAbleToJump ? 1: 0) * (1 << 6);
+		
+		
 
 //		System.out.println("enemies : "+probe(1,0,enemies));
 
@@ -163,6 +192,26 @@ implements Agent,Evolvable,Comparable,Cloneable{
 	}
 
 
+	public int list_ave(ArrayList<Integer> arraylist) {
+		if(arraylist.size()==0) {
+			return 0;
+		}
+		
+		else {
+		
+		int height_sum=0;
+		for(int i=0;i<arraylist.size();i++) {
+			height_sum += arraylist.get(i);
+		}
+		
+		return height_sum/arraylist.size();}
+		
+	}
+	
+	
+	
+	
+	
 	@Override
 	public Evolvable getNewInstance() {
 		// TODO 自動生成されたメソッド・スタブ

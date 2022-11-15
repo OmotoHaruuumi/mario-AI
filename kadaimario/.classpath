@@ -4,6 +4,9 @@
 		<attributes>
 			<attribute name="module" value="true"/>
 		</attributes>
+		<accessrules>
+			<accessrule kind="accessible" pattern="Program Files (x86)/Java/jre1.8.0_351"/>
+		</accessrules>
 	</classpathentry>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="lib" path="lib/asm-all-3.3.jar"/>

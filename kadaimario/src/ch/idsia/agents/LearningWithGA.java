@@ -63,7 +63,7 @@ public class LearningWithGA implements LearningAgent{
 
 			System.out.println("世代 : "+generation);
 
-			/* 100個体の評価 */
+			/*100個体の評価 */
 
 			compFit();
 			GAAgent nextagents[] = new GAAgent[popsize];
@@ -92,7 +92,7 @@ public class LearningWithGA implements LearningAgent{
 			/* 突然変異 */
 			mutate();
 			
-			int EndEpoch = 10;
+			int EndEpoch = 200;
 			if( generation == EndEpoch){
 				System.out.println("Generation["+generation+"] : Playing!");
 				halfwayPlayMario(bestAgent);
@@ -135,8 +135,10 @@ public class LearningWithGA implements LearningAgent{
 				+ " per action! Agent disqualified!");
 			}
 
+			
 			/* 評価値(距離)をセット */
 			EvaluationInfo evaluationInfo = basicTask.getEvaluationInfo();
+	
 			agents[i].setFitness(evaluationInfo.distancePassedCells);
 
 			agents[i].setDistance(evaluationInfo.distancePassedCells);
@@ -154,7 +156,7 @@ public class LearningWithGA implements LearningAgent{
 		if(presentBestAgentDistance > fmax){
 			bestAgent = (Agent)agents[0].clone();	//bestAgentを更新
 			fmax = presentBestAgentDistance;	//fmax更新
-//			writeFile();			//bestAgentのxmlを出力
+			writeFile();			//bestAgentのxmlを出力
 			System.out.println("fmax : "+fmax);
 		}
 		return;

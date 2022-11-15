@@ -283,7 +283,7 @@ public static void main(String[] args){
 	/* 学習後の得点をfinalScoreに保存し画面へ出力 */
 	float finalScore = LearningTrack.evaluateSubmission(marioAIOptions, learningAgent);
 
-
+	
     System.out.println("finalScore = " + finalScore);
     System.exit(0);
 }
