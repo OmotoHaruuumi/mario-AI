@@ -109,7 +109,7 @@ public boolean[] getAction()
     }
 	
 	//谷に落ちるとき
-	else if(marioMode==2  && isMarioOnGround && (!isObstacle(marioEgoRow+1,marioEgoCol) || !isObstacle(marioEgoRow+1,marioEgoCol+2))&& fire_counter==0) {
+	else if(marioMode==2  && isMarioOnGround && (!isObstacle(marioEgoRow+1,marioEgoCol) || !isObstacle(marioEgoRow+1,marioEgoCol+1))&& fire_counter==0) {
 		Attack();
 		fire_counter=fire_counter+1;
 	}
@@ -119,7 +119,6 @@ public boolean[] getAction()
 	else if(jumpcheck(marioEgoRow,marioEgoCol+1)) {
     	RW();
     }
-	
      //fire_counterが回っている時
       if(fire_counter>0) {
 		  if(fire_counter!=3) {

@@ -42,7 +42,7 @@ public static void main(String[] args)
 {
     final MarioAIOptions marioAIOptions = new MarioAIOptions(args);
 
-    final Agent agent = (Agent)Easy.load("LearningWithGA-2022-11-16_00-00-28.xml"); 
+    final Agent agent = (Agent)Easy.load("LearningWithGA-2022-11-22_16-39-52.xml"); 
     marioAIOptions.setAgent(agent);
     
     marioAIOptions.setArgs("-lde on -ltb off -ld 2 -ls 0 -le g");

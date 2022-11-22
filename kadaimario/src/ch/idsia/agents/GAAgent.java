@@ -141,18 +141,16 @@ implements Agent,Evolvable,Comparable,Cloneable{
 		
 		/* levelScene情報 */
 		input += probe(1,0 ,levelScene) * (1 << 13);
-		input += probe(2,0 ,levelScene) * (1 << 12);
 		input += probe(1 ,3,levelScene)* (1 <<  11);
-		input += probe(1 ,4,levelScene)* (1 <<  10);
-		input += probe(1 ,1  ,levelScene)* (1 <<  9);
-		input += probe(1 ,-1  ,levelScene)* (1 <<  8);
+		input += probe(1 ,1  ,levelScene)* (1 <<  10);
+		input += probe(1 ,-1  ,levelScene)* (1 <<  9);
 		
 		
 		
 		
 		
-		input += (isMarioOnGround ? 1: 0) * (1 << 7);
-		input += (isMarioAbleToJump ? 1: 0) * (1 << 6);
+		input += (isMarioOnGround ? 1: 0) * (1 << 8);
+		input += (isMarioAbleToJump ? 1: 0) * (1 << 7);
 		
 		
 
